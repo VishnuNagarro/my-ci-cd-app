@@ -1,0 +1,10 @@
+● amazon-cloudwatch-agent.service - Amazon CloudWatch Agent
+     Loaded: loaded (]8;;file://ip-10-0-1-41.ec2.internal/etc/systemd/system/amazon-cloudwatch-agent.service/etc/systemd/system/amazon-cloudwatch-agent.service]8;;; [0;1;32menabled[0m; preset: [0;1;38;5;185mdisabled[0m)
+    Drop-In: /etc/systemd/system/amazon-cloudwatch-agent.service.d
+             └─]8;;file://ip-10-0-1-41.ec2.internal/etc/systemd/system/amazon-cloudwatch-agent.service.d/amazon-cloudwatch-agent.confamazon-cloudwatch-agent.conf]8;;
+     Active: activating (auto-restart) (Result: exit-code) since Fri 2026-02-13 07:15:57 UTC; 59s ago
+    Process: 123412 ExecStart=/opt/aws/amazon-cloudwatch-agent/bin/start-amazon-cloudwatch-agent [0;1;31m(code=exited, status=1/FAILURE)[0m
+    Process: 123413 ExecStartPost=/bin/sh -c systemctl show -p MainPID amazon-cloudwatch-agent.service | cut -d= -f2 > /var/pids/amazon-cloudwatch-agent.pid (code=exited, status=0/SUCCESS)
+    Process: 123431 ExecStopPost=/bin/sh -c rm -f /var/pids/amazon-cloudwatch-agent.pid (code=exited, status=0/SUCCESS)
+   Main PID: 123412 (code=exited, status=1/FAILURE)
+        CPU: 112ms
