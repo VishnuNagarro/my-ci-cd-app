@@ -1,5 +1,3 @@
-name: CI-CD Pipeline
-
 on:
   push:
     branches:
@@ -13,13 +11,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            cd /root
-            git pull origin main
+      - name: Zip application
+        run: zip -r app.zip .
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp app.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }}/app.zip
+
+      - name: Create new application version
+        run: |
+          aws elasticbeanstalk create-application-version \
+          --application-name L2-WebApp \
+          --version-label v-${{ github.run_number }} \
+          --source-bundle S3Bucket=elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ secrets.AWS_ACCOUNT_ID }},S3Key=app.zip
+
+      - name: Deploy new version
+        run: |
+          aws elasticbeanstalk update-environment \
+          --environment-name L2-WebApp-Env \
+          --version-label v-${{ github.run_number }}
